@@ -8,7 +8,7 @@
 * v 3.0: 使用几何法求解逆运动学，并通过UDP将解（7个关节角，抓握信息）发往机械臂	*
 \******************************************************************************/
 #include "WAMikine.h"
-#include "LeapListener.h" 
+#include "../include/LeapListener.h" 
 #include "UDP.h"
 #include <eigen3/Eigen/Dense>
 #include <corecrt_math_defines.h>
