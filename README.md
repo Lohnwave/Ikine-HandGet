@@ -29,7 +29,10 @@
 * 附加库目录：	...\SDK\LeapSDK\lib;
 * 输入：		Leap.lib
 
-
+## 说明
+1. WAM_Ikine_HandGet_UDP 增加了WAMIkine的注释
+2. WAM_Ikine_HandGet_UDP0319 离线Leap Motion 求解
+3. LM_HandGet 采集手部掌心和拇指、食指及中指位置，笛卡尔空间调整为世界坐标
 ## 如果设备不响应：
 Leap Motion Service not running
 
