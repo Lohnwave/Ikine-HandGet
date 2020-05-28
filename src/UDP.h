@@ -10,7 +10,7 @@
 #include <iostream>
 #pragma comment(lib,"WS2_32.lib")  
 #define BUF_SIZE    80
-#define POST		8866
+#define POST		12345
 
 bool InitUDP (SOCKET& socketSrv, SOCKADDR_IN& addrClient);
 void SendAngle(const std::string &Message, const SOCKET&socketSrv, SOCKADDR_IN&addrClient);

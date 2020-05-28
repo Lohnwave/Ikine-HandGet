@@ -48,9 +48,10 @@ bool InitUDP (SOCKET& socketSrv, SOCKADDR_IN& addrClient)
 	addrSrv.sin_family = AF_INET;
 	addrSrv.sin_port = htons(POST);
 
-	// 设置客户端地址  指定发送地址
+	//// 设置客户端地址  指定发送地址
 	addrClient.sin_family = AF_INET;
-	addrClient.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+	//addrClient.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
+	addrClient.sin_addr.S_un.S_addr = inet_addr("192.168.1.100"); // 0523
 	addrClient.sin_port = htons(POST);
 
 	// 绑定套接字  
