@@ -49,9 +49,8 @@ void SampleListener::onFrame(const Controller& controller) {
 		const FingerList fingers = hand.fingers();
 		//Sleep(100);
 		bool isfinger = fingers.isEmpty() ? false : true;
-		if (true == isfinger)
-		{
-			if (handType == "Right hand") {
+		if (true == isfinger){
+			if (handType == "Left hand") {
 				FingerList::const_iterator fp = fingers.begin();
 				const Finger finger0 = *fp;
 				const Finger finger1 = *(++fp);
@@ -64,30 +63,6 @@ void SampleListener::onFrame(const Controller& controller) {
 				finger_distance_point02 = getCartesianDistance(finger2_point, finger0_point);
 			}
 		}
-
-		//if (handType == "Right hand")
-		//for (FingerList::const_iterator fl = fingers.begin(); fl != fingers.end(); ++fl) {
-		//	const Finger finger = *fl;
-		//	if (finger.type() == 0) {
-		//		finger0_point = finger.tipPosition(); // Thumb finger position
-		//	}
-		//	if (finger.type() == 1) {
-		//		finger1_point = finger.tipPosition(); // index finger position
-		//		// calculat distance between thumb finger with index finger
-		//		finger_distance_point01 = sqrt(pow((finger1_point.x - finger0_point.x), 2)
-		//			+ pow((finger1_point.y - finger0_point.y), 2)
-		//			+ pow((finger1_point.z - finger0_point.z), 2));
-		//		//std::cout  <<"Distance: " << finger_distance_point <<std::endl;
-		//	}
-		//	if (finger.type() == 2){
-		//		finger2_point = finger.tipPosition(); // Middle finger position
-		//		// calculat distance between thumb finger with middle finger
-		//		finger_distance_point02 = sqrt(pow((finger2_point.x - finger0_point.x), 2)
-		//			+ pow((finger2_point.y - finger0_point.y), 2)
-		//			+ pow((finger2_point.z - finger0_point.z), 2));
-		//		//std::cout  <<"Distance: " << finger_distance_point <<std::endl;
-		//	}
-		//}// end get finger position
 	}// end hand
 }// end onFrame
 

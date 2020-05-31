@@ -26,12 +26,12 @@
 
 using namespace std;
 using namespace Ikine;
-// Base Position - Pose
+// Tool Position - Pose
 const double BaseX = 500.0; // mm
 const double BaseY = 0.0;
-const double BaseZ = 200.0; 
+const double BaseZ = 0.0; // 200.0 
 
-const double BaseA = M_PI / 2;
+const double BaseA = M_PI; // M_PI / 2 ÕÆÐÄ³¯ÏÂ
 const double BaseB = 0.0;
 const double BaseC = 0.0;
 
@@ -92,11 +92,12 @@ void Q2Message(string & Message, vector<double>& Q, vector<double>& FingerDis) {
 	Message += int2str(FingerDis[0]);
 	Message += ",";
 	Message += int2str(FingerDis[1]);
+	Message += ","; // 0530 for wam mag sp
 }
 int main()
 {
 	remove("Qvector.txt");
-	remove("Pos.txt");
+	//remove("Pos.txt");
 	vector<double> curQ = { 0.0,0.0,0.0,0.0,0.0,0.0,0.0 };
 	vector<double> FingerDis = { 0.0, 0.0 };
 	vector<double> Qsolution;
@@ -224,7 +225,7 @@ int main()
 					QV.push_back(Qsolution);
 					//printQ(curQ);
 					saveQ2File("Qvector.txt", curQ);
-					savePos2File("Pos.txt", Pos_X, Pos_Y, Pos_Z);
+					//savePos2File("Pos.txt", Pos_X, Pos_Y, Pos_Z);
 				}
 				else
 					cout << "ERROR: Solving failed..." << endl;
