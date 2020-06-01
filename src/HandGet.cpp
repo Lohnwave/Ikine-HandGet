@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Copyright (C) 2019 . 江西省智能信息系统重点实验室, All rights reserved.		*
 * Version: 3.0																	*
-* Last Revised: 2019-12-08														*
+* Last Revised: 2020-06-01														*
 * Editor: Luozu																	*
 * v 1.0: 获取Leap motion 采集的手平移、姿态，并通过以太网传给服务器				*
 * v 2.0: 增加手指位置采集，且分为左手采集位姿，右手采集手指位置					*
@@ -21,8 +21,11 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <thread>
-#include <mutex>
+
+#include <thread> // for thread
+#include <mutex> // for lock
+
+
 
 using namespace std;
 using namespace Ikine;
@@ -34,6 +37,11 @@ const double BaseZ = 0.0; // 200.0
 const double BaseA = M_PI; // M_PI / 2 掌心朝下
 const double BaseB = 0.0;
 const double BaseC = 0.0;
+
+mutex udp_mutex;
+condition_variable condition;
+
+string Message("0.06,0.86,0.00,1.68,-0.35,0.93,-0.14,"); 
 
 string int2str(const float &int_temp)
 {
@@ -83,10 +91,13 @@ void printQ(const vector<double>& Q) {
 	cout << endl;
 }
 
-void Q2Message(string & Message, vector<double>& Q, vector<double>& FingerDis) {
+// double to str and avr filer 
+void Q2Message(string & Message, vector<double>& Q, vector<double>& FingerDis) { // 0601
+
+	Message.clear();
 	int size = Q.size();
 	for (int i = 0; i < size; ++i) {
-		Message += int2str(Q[i]);
+		Message += int2str((Q[i])); // 0601 for avr
 		Message += ",";
 	}
 	Message += int2str(FingerDis[0]);
@@ -94,11 +105,44 @@ void Q2Message(string & Message, vector<double>& Q, vector<double>& FingerDis) {
 	Message += int2str(FingerDis[1]);
 	Message += ","; // 0530 for wam mag sp
 }
+void Q2Message(string & Message, vector<double>& Q, vector<double>& Q_old, vector<double>& Q_old2, vector<double>& FingerDis) { // 0601
+
+	Message.clear();
+	int size = Q.size();
+	for (int i = 0; i < size; ++i) {
+		Message += int2str((Q[i]+Q_old[i]+ Q_old2[i])/3); // 0601 for avr
+		Message += ",";
+	}
+	Message += int2str(FingerDis[0]);
+	Message += ",";
+	Message += int2str(FingerDis[1]);
+	Message += ","; // 0530 for wam mag sp
+}
+
+void socketThread2(SOCKET&socketSrv, const char* strIP, int POST) {
+	SOCKADDR_IN addrClient;
+	//// 设置客户端地址  指定发送地址
+	addrClient.sin_family = AF_INET;
+	//addrClient.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
+	//addrClient.sin_addr.S_un.S_addr = inet_addr("192.168.1.102"); // 0523
+	addrClient.sin_addr.S_un.S_addr = inet_addr(strIP); // 0523
+	addrClient.sin_port = htons(POST);
+
+	bool going = true;
+	while (going) {
+		//udp_mutex.lock();
+		lock_guard<mutex> lg(udp_mutex);
+		SendAngle(::Message, socketSrv, addrClient);
+		condition.notify_all();
+		//cout << "send.." << endl;
+		//udp_mutex.unlock();
+	}
+}
 int main()
 {
 	remove("Qvector.txt");
 	//remove("Pos.txt");
-	vector<double> curQ = { 0.0,0.0,0.0,0.0,0.0,0.0,0.0 };
+	vector<double> curQ = { 0.019,0.719,-0.055,2.210,0.113,0.208,-0.110 }; // for init
 	vector<double> FingerDis = { 0.0, 0.0 };
 	vector<double> Qsolution;
 	Eigen::Vector3d Pos;
@@ -132,16 +176,49 @@ int main()
 	HandPosition.z = 0;
 	HandPosition_pre = HandPosition;
 
-	SOCKET socketSrv;
-	SOCKADDR_IN addrClient;
+	// socket unity
+	SOCKET socketSrv, socketSrv2;
+	//SOCKADDR_IN addrClient;
+
+
 	cout << endl;
-	if (InitUDP(socketSrv, addrClient))
+	if (InitUDP(socketSrv, 33333))
 		cout << "Socket Open..." << endl;
 	else
 		cout << "Error: socket open failed..." << endl;
+	cout << endl;
+	if (InitUDP(socketSrv2, 12345))
+		cout << "Socket2 Open..." << endl;
+	else
+		cout << "Error: socket2 open failed..." << endl;
+	/*
+	thread* socket_wam = NULL;
+	thread* socket_unity = NULL;
+
+	//socket_unity = new thread(socketThread, "127.0.0.1", 3333);
+	//socket_wam = new thread(socketThread, "192.168.1.102",12345);
+	socket_unity = new thread(socketThread2, ref(socketSrv), "127.0.0.1", 12345);
+	socket_wam = new thread(socketThread2, ref(socketSrv), "192.168.1.102", 12345);
+
+	socket_unity->detach();
+	socket_wam->detach();
+
+	*/
+	SOCKADDR_IN addrClient1, addrClient2;
+	//// 设置Unity客户端地址  指定发送地址
+	addrClient1.sin_family = AF_INET;
+	addrClient1.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
+	addrClient1.sin_port = htons(33333);
+	//// 设置 WAM客户端地址
+	addrClient2.sin_family = AF_INET;
+	addrClient2.sin_addr.S_un.S_addr = inet_addr("192.168.1.102"); // 0523
+	addrClient2.sin_port = htons(12345);
 
 	while (1)
 	{
+		vector<double> curQ_old = curQ; // for avr curQ_old + curQ / 2
+		vector<double> curQ_old2 = curQ_old; // for avr curQ_old + curQ / 2
+
 		if (HandPosition_pre.x == 0 && HandPosition_pre.y == 0 && HandPosition_pre.z == 0)
 		{
 			HandPosition_pre = listener.AcqurePosition();
@@ -183,6 +260,7 @@ int main()
 				(fabs(finger_distance_R01) > 10) ||
 				(fabs(finger_distance_R02) > 10)) {
 				// 相较于传递增量，可以避免累计误差
+				// LeapMotion 坐标与世界坐标存在偏差，需要坐标变换
 				x = HandPosition.z - x0;
 				y = HandPosition.x - y0;
 				z = HandPosition.y - z0;
@@ -206,7 +284,7 @@ int main()
 				//Pitch = BaseB+static_cast<double>(b);
 				//Yaw = BaseC-static_cast<double>(c);
 				Roll = BaseA - static_cast<double>(a);
-				Pitch = BaseB - static_cast<double>(b);
+				Pitch = -(BaseB - static_cast<double>(b)); // 20200601
 				Yaw = BaseC - static_cast<double>(c);
 
 				FingerDis[0] = static_cast<double>(finger_distance01);
@@ -230,18 +308,29 @@ int main()
 				else
 					cout << "ERROR: Solving failed..." << endl;
 				// UDP send Angle solutions and FingerDistance
-				string Message;
-				Q2Message(Message, curQ, FingerDis);
-				SendAngle(Message, socketSrv, addrClient);
+				// string Message;
+				//udp_mutex.lock();
+				//unique_lock<mutex> ul(udp_mutex);
+				//condition.wait(
+				//	ul, [] {return true; });
+				Q2Message(::Message, curQ, curQ_old, curQ_old2, FingerDis); // double to str and avr filer 
+				//Q2Message(::Message, curQ, FingerDis); // double to str and avr filer 
+				//ul.unlock();
+				//udp_mutex.unlock();
+				SendAngle(::Message, socketSrv, addrClient1);
+				SendAngle(::Message, socketSrv2, addrClient2);
+				
 				std::cout << std::string(2, ' ') << std::setiosflags(ios::fixed) << std::setprecision(6) <<
 					"Move: " << "X:  " << x << "\tY:  " << y << "\tZ:  " << z << "\tDistance01: " << finger_distance01 <<
 					"\n\tTx:  " << a << "\tTy:  " << b << "\tTz:  " << c << "\tDistance02: " << finger_distance02 << std::endl;
-
 
 			}// end send
 		}// end calculation
 	}// end while
 	// Remove the sample listener when done
 	controller.removeListener(listener);
+
+	//delete socket_unity;
+	//delete socket_wam;
 	return 0;
 }

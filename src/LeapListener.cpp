@@ -50,7 +50,7 @@ void SampleListener::onFrame(const Controller& controller) {
 		//Sleep(100);
 		bool isfinger = fingers.isEmpty() ? false : true;
 		if (true == isfinger){
-			if (handType == "Left hand") {
+			if (handType == "Right hand") {
 				FingerList::const_iterator fp = fingers.begin();
 				const Finger finger0 = *fp;
 				const Finger finger1 = *(++fp);
