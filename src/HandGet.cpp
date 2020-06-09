@@ -34,7 +34,7 @@ const double BaseX = 500.0; // mm
 const double BaseY = 0.0;
 const double BaseZ = 0.0; // 200.0 
 
-const double BaseA = M_PI; // M_PI / 2 ���ĳ���
+const double BaseA = M_PI; // M_PI / 2 掌心朝下
 const double BaseB = 0.0;
 const double BaseC = 0.0;
 
@@ -155,7 +155,7 @@ int main()
 	vector<vector<double>> QV;
 	
 
-	float x0 = 0.f, y0 = 0.f, z0 = 0.f, a0 = 0.f, b0 = 0.f, c0 = 0.f; //��ʼλ��
+	float x0 = 0.f, y0 = 0.f, z0 = 0.f, a0 = 0.f, b0 = 0.f, c0 = 0.f; // 初始位姿
 	float x = 0.f, y = 0.f, z = 0.f, a = 0.f, b = 0.f, c = 0.f;
 	
 	SampleListener listener(130, 170); // 初始化手指距离为150
@@ -179,8 +179,6 @@ int main()
 
 	// socket unity
 	SOCKET socketSrv, socketSrv2;
-	//SOCKADDR_IN addrClient;
-
 
 	cout << endl;
 	if (InitUDP(socketSrv, 33333))
@@ -210,7 +208,7 @@ int main()
 	addrClient1.sin_family = AF_INET;
 	addrClient1.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
 	addrClient1.sin_port = htons(33333);
-	//// 设置 WAM客户端地址 ////////
+	//// 设置 WAM客户端地址  指定发送地址 ////////
 	addrClient2.sin_family = AF_INET;
 	addrClient2.sin_addr.S_un.S_addr = inet_addr("192.168.1.102"); // 0523
 	addrClient2.sin_port = htons(12345);
@@ -227,7 +225,7 @@ int main()
 			HandDirection_pre = listener.AcqureDirection();
 			finger_distance_pre01 = listener.AcqureFingerDistance01();
 			finger_distance_pre02 = listener.AcqureFingerDistance02();
-			// ��ʼλ�û�ȡ  ���������� LeapMotion����У��
+			//// 初始位置获取  世界坐标与 LeapMotion坐标校对 ////
 			x0 = HandPosition_pre.z;
 			y0 = HandPosition_pre.x;
 			z0 = HandPosition_pre.y;
@@ -246,26 +244,26 @@ int main()
 			HandPosition_R.y = HandPosition.y - HandPosition_pre.y;
 			HandPosition_R.z = HandPosition.z - HandPosition_pre.z;
 
-			Eulerangel_R.x = HandDirection.pitch() - HandDirection_pre.pitch(); //��Ϊ��λ
+			Eulerangel_R.x = HandDirection.pitch() - HandDirection_pre.pitch(); //弧为单位
 			Eulerangel_R.y = HandNormal.roll() - HandNormal_pre.roll();
 			Eulerangel_R.z = HandDirection.yaw() - HandDirection_pre.yaw();
 
 			finger_distance_R01 = finger_distance01 - finger_distance_pre01;
 			finger_distance_R02 = finger_distance02 - finger_distance_pre02;
 
-			// �˴��Ժ��� ����Ϊ��λ
+			// 此处以毫米 弧度为单位
 			if (fabs(HandPosition_R.x) > 10 || fabs(HandPosition_R.y) > 10 || fabs(HandPosition_R.z) > 10 ||
 				(fabs(Eulerangel_R.x) > 0.2) ||
 				(fabs(Eulerangel_R.y) > 0.2) ||
 				(fabs(Eulerangel_R.z) > 0.2) ||
 				(fabs(finger_distance_R01) > 10) ||
 				(fabs(finger_distance_R02) > 10)) {
-				// ����ڴ������������Ա����ۼ����
-				// LeapMotion �����������������ƫ���Ҫ����任
+				// 相较于传递增量，可以避免累计误差
+				// LeapMotion 坐标与世界坐标存在偏差，需要坐标变换
 				x = HandPosition.z - x0;
 				y = HandPosition.x - y0;
 				z = HandPosition.y - z0;
-				// ��ֹ��̬�仯����Ӱ�����˶�ѧ���
+				// 防止姿态变化过大影响逆运动学求解
 				if (fabs(Eulerangel_R.x) < 0.5 && fabs(Eulerangel_R.y) < 0.5 && fabs(Eulerangel_R.z) < 0.5) {
 					a = HandDirection.pitch() - a0;
 					b = HandNormal.roll() - b0;
@@ -290,9 +288,9 @@ int main()
 
 				FingerDis[0] = static_cast<double>(finger_distance01);
 				FingerDis[1] = static_cast<double>(finger_distance02);
-				//FingerDis[1] = static_cast<double>(finger_distance01);
+				// FingerDis[1] = static_cast<double>(finger_distance01);
 				// Euler angle tranlate to Quaternion
-				//Eigen::Vector3d eulerAngle(Yaw, Pitch, Roll);
+				// Eigen::Vector3d eulerAngle(Yaw, Pitch, Roll);
 				Eigen::Vector3d eulerAngle(Yaw, Roll, Pitch); 
 				Eigen::AngleAxisd rollAngle(Eigen::AngleAxisd(eulerAngle(2), Eigen::Vector3d::UnitX()));
 				Eigen::AngleAxisd pitchAngle(Eigen::AngleAxisd(eulerAngle(1), Eigen::Vector3d::UnitY()));
@@ -305,19 +303,10 @@ int main()
 					//printQ(curQ);
 					saveQ2File("Qvector.txt", curQ);
 					//savePos2File("Pos.txt", Pos_X, Pos_Y, Pos_Z);
+					Q2Message(::Message, curQ, curQ_old, curQ_old2, FingerDis); // double to str and avr filer 
 				}
 				else
 					cout << "ERROR: Solving failed..." << endl;
-				// UDP send Angle solutions and FingerDistance
-				// string Message;
-				//udp_mutex.lock();
-				//unique_lock<mutex> ul(udp_mutex);
-				//condition.wait(
-				//	ul, [] {return true; });
-				Q2Message(::Message, curQ, curQ_old, curQ_old2, FingerDis); // double to str and avr filer 
-				//Q2Message(::Message, curQ, FingerDis); // double to str and avr filer 
-				//ul.unlock();
-				//udp_mutex.unlock();
 				SendAngle(::Message, socketSrv, addrClient1);
 				//SendAngle(::Message, socketSrv2, addrClient2);
 				

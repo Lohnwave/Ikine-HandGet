@@ -6,7 +6,7 @@
 * Leapmotion监听类实现：左手采集位姿、右手采集手指抓握闭合						*
 * SDK Vision： 3.2.1															*
 \******************************************************************************/
-#include "LeapListener.h"
+#include "../include/LeapListener.h" 
 using namespace Leap;
 Vector SampleListener::AcqureNormal()const {
 	return normal;

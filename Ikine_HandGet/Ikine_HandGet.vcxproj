@@ -137,8 +137,8 @@
     <ClCompile Include="..\src\WAMikine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\LeapListener.h" />
     <ClInclude Include="..\src\HandGet.h" />
-    <ClInclude Include="..\src\LeapListener.h" />
     <ClInclude Include="..\src\UDP.h" />
     <ClInclude Include="..\src\WAMikine.h" />
   </ItemGroup>
