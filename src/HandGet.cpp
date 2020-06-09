@@ -307,8 +307,8 @@ int main()
 				}
 				else
 					cout << "ERROR: Solving failed..." << endl;
-				SendAngle(::Message, socketSrv, addrClient1);
-				//SendAngle(::Message, socketSrv2, addrClient2);
+				SendAngle(::Message, socketSrv, addrClient1); // 发送给本地Unity端
+				//SendAngle(::Message, socketSrv2, addrClient2); // 发送给WAM工控机，当工控机关机是请注释此行
 				
 				std::cout << std::string(2, ' ') << std::setiosflags(ios::fixed) << std::setprecision(6) <<
 					"Move: " << "X:  " << x << "\tY:  " << y << "\tZ:  " << z << "\tDistance01: " << finger_distance01 <<
