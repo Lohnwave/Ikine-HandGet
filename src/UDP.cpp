@@ -5,8 +5,7 @@
 * Editor: Luozu																	*
 * UDP服务器端实现：发送关节角及抓握信息。注：关闭了发送缓冲区					*
 \******************************************************************************/
-#include "UDP.h"
-
+#include "../include/UDP.h" 
 using namespace std;
 
 bool InitUDP (SOCKET& socketSrv, int POST)

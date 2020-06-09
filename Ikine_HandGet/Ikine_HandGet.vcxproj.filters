@@ -29,16 +29,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\WAMikine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UDP.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\HandGet.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\LeapListener.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\UDP.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WAMikine.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

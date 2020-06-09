@@ -5,7 +5,6 @@
 #include <vector>
 #include <corecrt_math_defines.h>
 #include <eigen3/Eigen/Dense>
-using namespace Eigen;
 
 namespace Ikine {
 	/* Barrett WAM D-H parmeters */
@@ -17,12 +16,12 @@ namespace Ikine {
 	//MatrixXd T01, T12, T23, T34, T45, T56, T67, T07;
 	//VectorXd qoptim(7);
 	/* Get Homogeneous transformation matrix */
-	void DHmatrix(double alpha, double a, double d, double &theta, MatrixXd &T);
-	MatrixXd inline DHmatrix(double alpha, double a, double d, double theta);
+	void DHmatrix(double alpha, double a, double d, double &theta, Eigen::MatrixXd &T);
+	Eigen::MatrixXd inline DHmatrix(double alpha, double a, double d, double theta);
 	/* Initialize Barrett WAM arm using D-H parmeters */
 	//void InitiRobot();
 	bool isValid(double angles[]);
-	bool solve(Vector3d position, Quaterniond orientation, double phi, double theta[]);
+	bool solve(Eigen::Vector3d position, Eigen::Quaterniond orientation, double phi, double theta[]);
 	bool solve_IK(Eigen::Vector3d position, Eigen::Quaterniond orientation,
 		std::vector<double> currentjoints, std::vector<double>& joints);
 	

@@ -6,7 +6,7 @@
 * Eritor: Luozu																	*
 * 基于几何法的带连杆偏移的七自由度冗余机械臂逆运动学求解器						*
 \******************************************************************************/
-#include "WAMikine.h"
+#include "../include/WAMikine.h" 
 #include <iostream>
 #include <eigen3/Eigen/Dense>
 #include <vector>

@@ -138,9 +138,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\LeapListener.h" />
+    <ClInclude Include="..\include\UDP.h" />
+    <ClInclude Include="..\include\WAMikine.h" />
     <ClInclude Include="..\src\HandGet.h" />
-    <ClInclude Include="..\src\UDP.h" />
-    <ClInclude Include="..\src\WAMikine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
