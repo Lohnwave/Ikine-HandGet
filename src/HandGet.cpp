@@ -1,11 +1,11 @@
 /******************************************************************************\
-* Copyright (C) 2019 . ½­Î÷Ê¡ÖÇÄÜĞÅÏ¢ÏµÍ³ÖØµãÊµÑéÊÒ, All rights reserved.		*
+* Copyright (C) 2020  æ±Ÿè¥¿çœæ™ºèƒ½ä¿¡æ¯ç³»ç»Ÿé‡ç‚¹å®éªŒå®¤, All rights reserved.		*
 * Version: 3.0																	*
 * Last Revised: 2020-06-01														*
 * Editor: Luozu																	*
-* v 1.0: »ñÈ¡Leap motion ²É¼¯µÄÊÖÆ½ÒÆ¡¢×ËÌ¬£¬²¢Í¨¹ıÒÔÌ«Íø´«¸ø·şÎñÆ÷				*
-* v 2.0: Ôö¼ÓÊÖÖ¸Î»ÖÃ²É¼¯£¬ÇÒ·ÖÎª×óÊÖ²É¼¯Î»×Ë£¬ÓÒÊÖ²É¼¯ÊÖÖ¸Î»ÖÃ					*
-* v 3.0: Ê¹ÓÃ¼¸ºÎ·¨Çó½âÄæÔË¶¯Ñ§£¬²¢Í¨¹ıUDP½«½â£¨7¸ö¹Ø½Ú½Ç£¬×¥ÎÕĞÅÏ¢£©·¢Íù»úĞµ±Û	*
+* v 1.0: è·å–Leap motion é‡‡é›†çš„æ‰‹å¹³ç§»ã€å§¿æ€ï¼Œå¹¶é€šè¿‡ä»¥å¤ªç½‘ä¼ ç»™æœåŠ¡å™¨				*
+* v 2.0: å¢åŠ æ‰‹æŒ‡ä½ç½®é‡‡é›†ï¼Œä¸”åˆ†ä¸ºå·¦æ‰‹é‡‡é›†ä½å§¿ï¼Œå³æ‰‹é‡‡é›†æ‰‹æŒ‡ä½ç½®					*
+* v 3.0: ä½¿ç”¨å‡ ä½•æ³•æ±‚è§£é€†è¿åŠ¨å­¦ï¼Œå¹¶é€šè¿‡UDPå°†è§£ï¼ˆ7ä¸ªå…³èŠ‚è§’ï¼ŒæŠ“æ¡ä¿¡æ¯ï¼‰å‘å¾€æœºæ¢°è‡‚	*
 \******************************************************************************/
 #include "WAMikine.h"
 #include "../include/LeapListener.h" 
@@ -34,7 +34,7 @@ const double BaseX = 500.0; // mm
 const double BaseY = 0.0;
 const double BaseZ = 0.0; // 200.0 
 
-const double BaseA = M_PI; // M_PI / 2 ÕÆĞÄ³¯ÏÂ
+const double BaseA = M_PI; // M_PI / 2 ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
 const double BaseB = 0.0;
 const double BaseC = 0.0;
 
@@ -48,7 +48,7 @@ string int2str(const float &int_temp)
 	string string_temp;
 	stringstream stream;
 	stream << int_temp;
-	string_temp = stream.str();   //´Ë´¦Ò²¿ÉÒÔÓÃ stream>>string_temp  
+	string_temp = stream.str();   //æ­¤å¤„ä¹Ÿå¯ä»¥ç”¨ stream>>string_temp  
 	return string_temp;
 }
 string int2str(const double &int_temp)
@@ -56,7 +56,7 @@ string int2str(const double &int_temp)
 	string string_temp;
 	stringstream stream;
 	stream << int_temp;
-	string_temp = stream.str();   //´Ë´¦Ò²¿ÉÒÔÓÃ stream>>string_temp  
+	string_temp = stream.str();   //ï¿½Ë´ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ stream>>string_temp  
 	return string_temp;
 }
 void saveQ2File(string filePath, const vector<double>&Q) {
@@ -110,7 +110,8 @@ void Q2Message(string & Message, vector<double>& Q, vector<double>& Q_old, vecto
 	Message.clear();
 	int size = Q.size();
 	for (int i = 0; i < size; ++i) {
-		Message += int2str((Q[i]+Q_old[i]+ Q_old2[i])/3); // 0601 for avr
+		Q[i] = (Q[i] + Q_old[i] + Q_old2[i]) / 3;
+		Message += int2str(Q[i]); // 0601 for avr
 		Message += ",";
 	}
 	Message += int2str(FingerDis[0]);
@@ -121,7 +122,7 @@ void Q2Message(string & Message, vector<double>& Q, vector<double>& Q_old, vecto
 
 void socketThread2(SOCKET&socketSrv, const char* strIP, int POST) {
 	SOCKADDR_IN addrClient;
-	//// ÉèÖÃ¿Í»§¶ËµØÖ·  Ö¸¶¨·¢ËÍµØÖ·
+	//// ï¿½ï¿½ï¿½Ã¿Í»ï¿½ï¿½Ëµï¿½Ö·  Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½Ö·
 	addrClient.sin_family = AF_INET;
 	//addrClient.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
 	//addrClient.sin_addr.S_un.S_addr = inet_addr("192.168.1.102"); // 0523
@@ -154,22 +155,22 @@ int main()
 	vector<vector<double>> QV;
 	
 
-	float x0 = 0.f, y0 = 0.f, z0 = 0.f, a0 = 0.f, b0 = 0.f, c0 = 0.f; //³õÊ¼Î»×Ë
+	float x0 = 0.f, y0 = 0.f, z0 = 0.f, a0 = 0.f, b0 = 0.f, c0 = 0.f; //ï¿½ï¿½Ê¼Î»ï¿½ï¿½
 	float x = 0.f, y = 0.f, z = 0.f, a = 0.f, b = 0.f, c = 0.f;
 	
-	SampleListener listener(130, 170); // ³õÊ¼»¯ÊÖÖ¸¾àÀëÎª150
+	SampleListener listener(130, 170); // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Îª150
 	Leap::Controller controller;
 	controller.addListener(listener);
 	Sleep(2000);
-	Leap::Vector HandPosition_pre, HandNormal_pre, HandDirection_pre; // ÉÏÒ»Ö¡µÄÊÖµÄÊı¾İ
-	float finger_distance_pre01 = 0.f;							// ÉÏÒ»Ö¡µÄ01ÊÖÖ¸¾àÀëÊı¾İ
-	float finger_distance_pre02 = 0.f;							// ÉÏÒ»Ö¡µÄ02ÊÖÖ¸¾àÀëÊı¾İ
-	Leap::Vector HandPosition, HandNormal, HandDirection;				// µ±Ç°Ö¡µÄÊÖµÄÊı¾İ
-	float finger_distance01 = 0.f;								// µ±Ç°Ö¡µÄ01ÊÖÖ¸¾àÀëÊı¾İ
-	float finger_distance02 = 0.f;								// µ±Ç°Ö¡µÄ02ÊÖÖ¸¾àÀëÊı¾İ
-	Leap::Vector HandPosition_R, Eulerangel_R;						// Ç°ºóÁ½Ö¡µÄÊÖµÄÎ»×Ë±ä»¯Á¿
-	float finger_distance_R01 = 0;								// Ç°ºó01ÊÖÖ¸¾àÀë±ä»¯
-	float finger_distance_R02 = 0;								// Ç°ºó02ÊÖÖ¸¾àÀë±ä»¯
+	Leap::Vector HandPosition_pre, HandNormal_pre, HandDirection_pre; // ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½
+	float finger_distance_pre01 = 0.f;							// ï¿½ï¿½Ò»Ö¡ï¿½ï¿½01ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	float finger_distance_pre02 = 0.f;							// ï¿½ï¿½Ò»Ö¡ï¿½ï¿½02ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	Leap::Vector HandPosition, HandNormal, HandDirection;				// ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½
+	float finger_distance01 = 0.f;								// ï¿½ï¿½Ç°Ö¡ï¿½ï¿½01ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	float finger_distance02 = 0.f;								// ï¿½ï¿½Ç°Ö¡ï¿½ï¿½02ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	Leap::Vector HandPosition_R, Eulerangel_R;						// Ç°ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½Öµï¿½Î»ï¿½Ë±ä»¯ï¿½ï¿½
+	float finger_distance_R01 = 0;								// Ç°ï¿½ï¿½01ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ä»¯
+	float finger_distance_R02 = 0;								// Ç°ï¿½ï¿½02ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ä»¯
 
 	HandPosition.x = 0;
 	HandPosition.y = 0;
@@ -205,11 +206,11 @@ int main()
 
 	*/
 	SOCKADDR_IN addrClient1, addrClient2;
-	//// ÉèÖÃUnity¿Í»§¶ËµØÖ·  Ö¸¶¨·¢ËÍµØÖ·
+	//// ï¿½ï¿½ï¿½ï¿½Unityï¿½Í»ï¿½ï¿½Ëµï¿½Ö·  Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½Ö·
 	addrClient1.sin_family = AF_INET;
 	addrClient1.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
 	addrClient1.sin_port = htons(33333);
-	//// ÉèÖÃ WAM¿Í»§¶ËµØÖ·
+	//// ï¿½ï¿½ï¿½ï¿½ WAMï¿½Í»ï¿½ï¿½Ëµï¿½Ö·
 	addrClient2.sin_family = AF_INET;
 	addrClient2.sin_addr.S_un.S_addr = inet_addr("192.168.1.102"); // 0523
 	addrClient2.sin_port = htons(12345);
@@ -226,7 +227,7 @@ int main()
 			HandDirection_pre = listener.AcqureDirection();
 			finger_distance_pre01 = listener.AcqureFingerDistance01();
 			finger_distance_pre02 = listener.AcqureFingerDistance02();
-			// ³õÊ¼Î»ÖÃ»ñÈ¡  ÊÀ½ç×ø±êÓë LeapMotion×ø±êĞ£¶Ô
+			// ï¿½ï¿½Ê¼Î»ï¿½Ã»ï¿½È¡  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ LeapMotionï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½
 			x0 = HandPosition_pre.z;
 			y0 = HandPosition_pre.x;
 			z0 = HandPosition_pre.y;
@@ -245,26 +246,26 @@ int main()
 			HandPosition_R.y = HandPosition.y - HandPosition_pre.y;
 			HandPosition_R.z = HandPosition.z - HandPosition_pre.z;
 
-			Eulerangel_R.x = HandDirection.pitch() - HandDirection_pre.pitch(); //»¡Îªµ¥Î»
+			Eulerangel_R.x = HandDirection.pitch() - HandDirection_pre.pitch(); //ï¿½ï¿½Îªï¿½ï¿½Î»
 			Eulerangel_R.y = HandNormal.roll() - HandNormal_pre.roll();
 			Eulerangel_R.z = HandDirection.yaw() - HandDirection_pre.yaw();
 
 			finger_distance_R01 = finger_distance01 - finger_distance_pre01;
 			finger_distance_R02 = finger_distance02 - finger_distance_pre02;
 
-			// ´Ë´¦ÒÔºÁÃ× »¡¶ÈÎªµ¥Î»
+			// ï¿½Ë´ï¿½ï¿½Ôºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Î»
 			if (fabs(HandPosition_R.x) > 10 || fabs(HandPosition_R.y) > 10 || fabs(HandPosition_R.z) > 10 ||
 				(fabs(Eulerangel_R.x) > 0.2) ||
 				(fabs(Eulerangel_R.y) > 0.2) ||
 				(fabs(Eulerangel_R.z) > 0.2) ||
 				(fabs(finger_distance_R01) > 10) ||
 				(fabs(finger_distance_R02) > 10)) {
-				// Ïà½ÏÓÚ´«µİÔöÁ¿£¬¿ÉÒÔ±ÜÃâÀÛ¼ÆÎó²î
-				// LeapMotion ×ø±êÓëÊÀ½ç×ø±ê´æÔÚÆ«²î£¬ĞèÒª×ø±ê±ä»»
+				// ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Û¼ï¿½ï¿½ï¿½ï¿½
+				// LeapMotion ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½î£¬ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ä»»
 				x = HandPosition.z - x0;
 				y = HandPosition.x - y0;
 				z = HandPosition.y - z0;
-				// ·ÀÖ¹×ËÌ¬±ä»¯¹ı´óÓ°ÏìÄæÔË¶¯Ñ§Çó½â
+				// ï¿½ï¿½Ö¹ï¿½ï¿½Ì¬ï¿½ä»¯ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½Ñ§ï¿½ï¿½ï¿½
 				if (fabs(Eulerangel_R.x) < 0.5 && fabs(Eulerangel_R.y) < 0.5 && fabs(Eulerangel_R.z) < 0.5) {
 					a = HandDirection.pitch() - a0;
 					b = HandNormal.roll() - b0;
@@ -318,7 +319,7 @@ int main()
 				//ul.unlock();
 				//udp_mutex.unlock();
 				SendAngle(::Message, socketSrv, addrClient1);
-				SendAngle(::Message, socketSrv2, addrClient2);
+				//SendAngle(::Message, socketSrv2, addrClient2);
 				
 				std::cout << std::string(2, ' ') << std::setiosflags(ios::fixed) << std::setprecision(6) <<
 					"Move: " << "X:  " << x << "\tY:  " << y << "\tZ:  " << z << "\tDistance01: " << finger_distance01 <<
