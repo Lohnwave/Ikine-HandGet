@@ -56,7 +56,7 @@ string int2str(const double &int_temp)
 	string string_temp;
 	stringstream stream;
 	stream << int_temp;
-	string_temp = stream.str();   //�˴�Ҳ������ stream>>string_temp  
+	string_temp = stream.str();  
 	return string_temp;
 }
 void saveQ2File(string filePath, const vector<double>&Q) {
@@ -122,7 +122,7 @@ void Q2Message(string & Message, vector<double>& Q, vector<double>& Q_old, vecto
 
 void socketThread2(SOCKET&socketSrv, const char* strIP, int POST) {
 	SOCKADDR_IN addrClient;
-	//// ���ÿͻ��˵�ַ  ָ�����͵�ַ
+	/////// 设置客户端地址  指定发送地址 /////////
 	addrClient.sin_family = AF_INET;
 	//addrClient.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
 	//addrClient.sin_addr.S_un.S_addr = inet_addr("192.168.1.102"); // 0523
@@ -158,19 +158,19 @@ int main()
 	float x0 = 0.f, y0 = 0.f, z0 = 0.f, a0 = 0.f, b0 = 0.f, c0 = 0.f; //��ʼλ��
 	float x = 0.f, y = 0.f, z = 0.f, a = 0.f, b = 0.f, c = 0.f;
 	
-	SampleListener listener(130, 170); // ��ʼ����ָ����Ϊ150
+	SampleListener listener(130, 170); // 初始化手指距离为150
 	Leap::Controller controller;
 	controller.addListener(listener);
 	Sleep(2000);
-	Leap::Vector HandPosition_pre, HandNormal_pre, HandDirection_pre; // ��һ֡���ֵ�����
-	float finger_distance_pre01 = 0.f;							// ��һ֡��01��ָ��������
-	float finger_distance_pre02 = 0.f;							// ��һ֡��02��ָ��������
-	Leap::Vector HandPosition, HandNormal, HandDirection;				// ��ǰ֡���ֵ�����
-	float finger_distance01 = 0.f;								// ��ǰ֡��01��ָ��������
-	float finger_distance02 = 0.f;								// ��ǰ֡��02��ָ��������
-	Leap::Vector HandPosition_R, Eulerangel_R;						// ǰ����֡���ֵ�λ�˱仯��
-	float finger_distance_R01 = 0;								// ǰ��01��ָ����仯
-	float finger_distance_R02 = 0;								// ǰ��02��ָ����仯
+	Leap::Vector HandPosition_pre, HandNormal_pre, HandDirection_pre;	// 上一帧的手的数据
+	float finger_distance_pre01 = 0.f;									// 上一帧的01手指距离数据
+	float finger_distance_pre02 = 0.f;									// 上一帧的02手指距离数据
+	Leap::Vector HandPosition, HandNormal, HandDirection;				// 当前帧的手的数据
+	float finger_distance01 = 0.f;										// 当前帧的01手指距离数据
+	float finger_distance02 = 0.f;										// 当前帧的02手指距离数据
+	Leap::Vector HandPosition_R, Eulerangel_R;							// 前后两帧的手的位姿变化量
+	float finger_distance_R01 = 0;										// 前后01手指距离变化
+	float finger_distance_R02 = 0;										// 前后02手指距离变化
 
 	HandPosition.x = 0;
 	HandPosition.y = 0;
@@ -206,11 +206,11 @@ int main()
 
 	*/
 	SOCKADDR_IN addrClient1, addrClient2;
-	//// ����Unity�ͻ��˵�ַ  ָ�����͵�ַ
+	//// 设置Unity客户端地址  指定发送地址 ////////
 	addrClient1.sin_family = AF_INET;
 	addrClient1.sin_addr.S_un.S_addr = inet_addr("127.0.0.1"); // 0523
 	addrClient1.sin_port = htons(33333);
-	//// ���� WAM�ͻ��˵�ַ
+	//// 设置 WAM客户端地址 ////////
 	addrClient2.sin_family = AF_INET;
 	addrClient2.sin_addr.S_un.S_addr = inet_addr("192.168.1.102"); // 0523
 	addrClient2.sin_port = htons(12345);
